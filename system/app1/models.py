@@ -14,3 +14,6 @@ class ScrapItem(models.Model):
 
 class DailyScrapEntry(models.Model):
     pass
+
+class ScrapEntryDetail(models.Model):
+    pass
