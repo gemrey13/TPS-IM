@@ -7,13 +7,15 @@
       <label class="logo">TPS-IM</label>
       <ul>
         <li><a href="#">Home</a></li>
-        <li><a class="active" href="{% url 'daily_scrap_table' %}">Daily Scraps Entry</a></li>
+        <li><a {% if request.resolver_match.url_name == 'daily_scrap_table' %}class="active"{% endif %} href="{% url 'daily_scrap_table' %}">Daily Scraps Entry</a></li>
         <li><a href="#">Transaction</a></li>
         <li><a href="#">About</a></li>
         {% if user.is_authenticated %}
           <li><a href="{% url 'logout' %}">Logout</a></li>
         {% else %}
-          <li><a href="{% url 'login' %}">Login</a></li>
+          <li><a {% if request.resolver_match.url_name == 'login' %}class="active"{% endif %} href="{% url 'login' %}">Login</a></li>
         {% endif %}
+
       </ul>
     </nav>
+
