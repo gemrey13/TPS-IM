@@ -99,17 +99,22 @@ def add_daily_scrap_entry(request):
                     }
                 )
 
-                scrap_entry_detail, created = ScrapEntryDetail.objects.get_or_create(
+                scrap_entry_detail = ScrapEntryDetail.objects.filter(
                     daily_scrap_entry=daily_scrap_entry,
-                    scrap_item=scrap_item,
-                    defaults={
-                        'quantity': quantity,
-                    }
-                )
+                    scrap_item=scrap_item
+                ).first()
 
-                if not created:
-                    scrap_entry_detail.quantity += int(quantity)
+                if scrap_entry_detail:
+                    # If the ScrapEntryDetail already exists, update the quantity
+                    scrap_entry_detail.quantity = F('quantity') + int(quantity)
                     scrap_entry_detail.save()
+                else:
+                    # If the ScrapEntryDetail does not exist, create a new one
+                    ScrapEntryDetail.objects.create(
+                        daily_scrap_entry=daily_scrap_entry,
+                        scrap_item=scrap_item,
+                        quantity=int(quantity)
+                    )
 
                 scraps_added.append(scrap_item)
 
@@ -120,6 +125,7 @@ def add_daily_scrap_entry(request):
     return render(request, 'add_daily_scrap_entry.html', {'scrap_types': scrap_types})
 
 
+
 @login_required(login_url='login')
 def remove_scrap_entry_detail(request, detail_id):
     scrap_entry_detail = get_object_or_404(ScrapEntryDetail, id=detail_id)
@@ -127,6 +133,8 @@ def remove_scrap_entry_detail(request, detail_id):
     scrap_entry_detail.delete()
     return redirect('daily_scrap_table')
 
+
+from django.db.models import F
 
 @login_required(login_url='login')
 def add_scrap_item_to_daily_scrap_entry(request, entry_id):
@@ -138,17 +146,30 @@ def add_scrap_item_to_daily_scrap_entry(request, entry_id):
 
     if request.method == 'POST':
         scrap_item_id = request.POST['scrap_item']
-        quantity = request.POST['quantity']
+        quantity = int(request.POST['quantity'])
 
         try:
             scrap_item = ScrapItem.objects.get(id=scrap_item_id)
-            quantity = int(quantity)
+
             if quantity > 0:
-                scrap_entry_detail = ScrapEntryDetail.objects.create(
+                # Check if ScrapEntryDetail already exists for the given daily_scrap_entry and scrap_item
+                scrap_entry_detail = ScrapEntryDetail.objects.filter(
                     daily_scrap_entry=daily_scrap_entry,
-                    scrap_item=scrap_item,
-                    quantity=quantity
-                )
+                    scrap_item=scrap_item
+                ).first()
+
+                if scrap_entry_detail:
+                    # If the ScrapEntryDetail already exists, update the quantity
+                    scrap_entry_detail.quantity = F('quantity') + quantity
+                    scrap_entry_detail.save()
+                else:
+                    # If the ScrapEntryDetail does not exist, create a new one
+                    ScrapEntryDetail.objects.create(
+                        daily_scrap_entry=daily_scrap_entry,
+                        scrap_item=scrap_item,
+                        quantity=quantity
+                    )
+
                 return redirect('daily_scrap_table')
             else:
                 pass
@@ -160,6 +181,7 @@ def add_scrap_item_to_daily_scrap_entry(request, entry_id):
         'associated_scrap_items': associated_scrap_items,
     }
     return render(request, 'add_scrap_item.html', context)
+
 
 
 from django.contrib import messages

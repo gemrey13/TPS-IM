@@ -17,8 +17,18 @@ class ScrapItem(models.Model):
     def __str__(self):
         return f"RFID: {self.RFID}, Type: {self.scrap_type}, Weight: {self.weight} kg"
 
+class Customer(models.Model):
+    name = models.CharField(max_length=100)
+    contact_number = models.CharField(max_length=20)
+    address = models.TextField()
+
+    def __str__(self):
+        return self.name
+
 class DailyScrapEntry(models.Model):
     date = models.DateField()
+    customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True)
+    staff_responsible = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     scraps = models.ManyToManyField(ScrapItem, through='ScrapEntryDetail')
 
     def __str__(self):
@@ -43,6 +53,8 @@ def delete_empty_daily_scrap_entry(sender, instance, **kwargs):
 
 class Transaction(models.Model):
     date = models.DateField()
+    customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True)
+    staff_responsible = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     scraps = models.ManyToManyField(ScrapItem, through='TransactionDetail')
 
     def __str__(self):
@@ -55,7 +67,6 @@ class TransactionDetail(models.Model):
 
     def __str__(self):
         return f"Transaction: {self.transaction}, Scrap Item: {self.scrap_item}, Quantity: {self.quantity}"
-
 
 class UserProfile(models.Model):
     USER_TYPES = (
