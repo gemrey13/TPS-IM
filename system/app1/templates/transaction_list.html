@@ -2,6 +2,7 @@
 {% block content %}
 {% load static %}
     <h1>Transaction List</h1>
+    <a href="{% url 'create_transaction' %}">Add transaction</a>
     <ul>
         {% for transaction in transactions %}
             <li>{{ transaction }}</li>
