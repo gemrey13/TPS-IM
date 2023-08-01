@@ -13,9 +13,9 @@
         <a href="#">Forgot password?</a>
         <input type="submit" class="button" value="Login">
       </form>
-      {% if error %}
-          <p>{{ error }}</p>
-      {% endif %}
+      {% for message in messages %}
+          <p style="color: red;">{{ message }}</p>
+      {% endfor %}
       <div class="signup">
         <span class="signup">Don't have an account?
          <a href="{% url 'signup' %}">Signup</label>

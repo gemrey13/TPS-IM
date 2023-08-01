@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login as auth_login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 
 from .models import *
 from django.http import HttpResponse
@@ -160,6 +161,7 @@ def add_scrap_item_to_daily_scrap_entry(request, entry_id):
     return render(request, 'add_scrap_item.html', context)
 
 
+from django.contrib import messages
 
 def login(request):
     if request.method == 'POST':
@@ -170,13 +172,35 @@ def login(request):
             auth_login(request, user)
             return redirect('daily_scrap_table')
         else:
+            messages.error(request, 'Invalid login credentials.')  
             return render(request, 'login.html', {'error': 'Invalid login credentials.'})
     else:
+        messages.get_messages(request).used = True
         return render(request, 'login.html', {'error': 'Invalid credentials'})
 
 def user_logout(request):
     logout(request)
-    return redirect('login')  # Redirect to the login page after logout
+    return redirect('login') 
+
+
 
 def signup(request):
-	return render(request, 'signup.html')
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirm_password')
+
+        if password != confirm_password:
+            messages.error(request, 'Passwords do not match.')
+            return render(request, 'signup.html')
+
+        try:
+            user = User.objects.create_user(username=username, password=password)
+            messages.success(request, 'Account created successfully. You can now login.')
+            return redirect('login')
+        except Exception as e:
+            messages.error(request, f'An error occurred: {str(e)}')
+            return render(request, 'signup.html')
+
+    messages.get_messages(request).used = True
+    return render(request, 'signup.html')

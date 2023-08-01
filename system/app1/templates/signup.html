@@ -6,12 +6,16 @@
     <input type="checkbox" id="check">
     <div class="login form">
       <header>Login</header>
-      <form action="#">
-        <input type="text" placeholder="Enter your email">
-        <input type="password" placeholder="Create a password">
-        <input type="password" placeholder="Confirm your password">
-        <input type="button" class="button" value="Signup">
+      <form method="post">
+        {% csrf_token %}
+        <input type="text" placeholder="Enter your username" name='username'>
+        <input type="password" placeholder="Create a password" name='password'>
+        <input type="password" placeholder="Confirm your password" name='confirm_password'>
+        <input type="submit" class="button" value="Signup">
       </form>
+      {% for message in messages %}
+          <p style="color: {% if message.tags == 'success' %}green{% else %}red{% endif %}">{{ message }}</p>
+      {% endfor %}
       <div class="signup">
         <span class="signup">Already have an account?
          <a href="{% url 'login' %}">Login</label>
