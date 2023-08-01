@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<h1>Create Transaction</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label for="id_date">Date:</label>
+        <input type="date" name="date" required>
+        <br>
+        <p>Customer:</p>
+        <label for="id_customer_name">Name:</label>
+        <input type="text" name="customer_name" required>
+        <br>
+        <label for="id_contact_number">Contact Number:</label>
+        <input type="text" name="contact_number" required>
+        <br>
+        <label for="id_address">Address:</label>
+        <textarea name="address" required></textarea>
+        <br>
+        <p>Scraps:</p>
+        {% for scrap_item in scraps %}
+            <label>
+                <input type="checkbox" name="scraps" value="{{ scrap_item.id }}">
+                {{ scrap_item.RFID }}, {{ scrap_item.scrap_type.name }}, {{ scrap_item.weight }} kg
+            </label>
+            <br>
+        {% endfor %}
+        <br>
+        <button type="submit">Save</button>
+    </form>
+{% endblock content %}

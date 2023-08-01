@@ -1,23 +1,10 @@
-<!-- transaction_list.html -->
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% block content %}
-  <h1>Transaction List</h1>
-  <ul>
-    {% for transaction in transactions %}
-      <li>
-        Transaction Date: {{ transaction.date }}<br>
-        Customer: {{ transaction.customer.name }}<br>
-        Staff Responsible: {{ transaction.staff_responsible.username }}<br>
-        <ul>
-          {% for detail in transaction.transactiondetail_set.all %}
-            <li>
-              Scrap Item: {{ detail.scrap_item.RFID }} - {{ detail.scrap_item.scrap_type.name }} ({{ detail.scrap_item.weight }} kg)<br>
-              Quantity: {{ detail.quantity }}
-            </li>
-          {% endfor %}
-        </ul>
-      </li>
-    {% endfor %}
-  </ul>
-  <a href="{% url 'add_transaction' %}">Add Transaction</a>
+{% load static %}
+    <h1>Transaction List</h1>
+    <ul>
+        {% for transaction in transactions %}
+            <li>{{ transaction }}</li>
+        {% endfor %}
+    </ul>
 {% endblock content %}

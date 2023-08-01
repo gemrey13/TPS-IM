@@ -18,7 +18,12 @@ nav{
   height: 80px;
   width: 100%;
 }
-label.logo{
+
+.logo-img{
+  position: relative;
+  top: 15px;
+}
+span.logo{
   color: white;
   font-size: 35px;
   line-height: 80px;

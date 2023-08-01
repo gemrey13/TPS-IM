@@ -1,14 +1,17 @@
-
+{% load static %}
     <nav>
       <input type="checkbox" id="check">
       <label for="check" class="checkbtn">
         <i class="fas fa-bars"></i>
       </label>
-      <label class="logo">TPS-IM</label>
+          <span class="logo">
+            <img src="{% static 'img/logotps.png' %}" width="50" class="logo-img">
+          <span>Daquila Junkshop</span>
+        </span>
       <ul>
         <li><a href="#">Home</a></li>
         <li><a {% if request.resolver_match.url_name == 'daily_scrap_table' %}class="active"{% endif %} href="{% url 'daily_scrap_table' %}">Daily Scraps Entry</a></li>
-        <li><a href="#">Transaction</a></li>
+        <li><a {% if request.resolver_match.url_name == 'transaction_list' %}class="active"{% endif %} href="{% url 'transaction_list' %}">Transaction</a></li>
         <li><a href="#">About</a></li>
         {% if user.is_authenticated %}
           <li><a href="{% url 'logout' %}">Logout</a></li>

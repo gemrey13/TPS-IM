@@ -2,6 +2,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login as auth_login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.db.models import F
+from django.contrib import messages
+
 
 from .models import *
 
@@ -135,7 +138,6 @@ def remove_scrap_entry_detail(request, detail_id):
     return redirect('daily_scrap_table')
 
 
-from django.db.models import F
 
 @login_required(login_url='login')
 def add_scrap_item_to_daily_scrap_entry(request, entry_id):
@@ -185,7 +187,6 @@ def add_scrap_item_to_daily_scrap_entry(request, entry_id):
 
 
 
-from django.contrib import messages
 
 def login(request):
     if request.method == 'POST':
@@ -230,46 +231,43 @@ def signup(request):
     return render(request, 'signup.html')
 
 
-def add_transaction(request):
+
+@login_required(login_url='login')
+def create_transaction(request):
     if request.method == 'POST':
         date = request.POST.get('date')
-        customer_id = request.POST.get('customer')
-        staff_responsible_id = request.POST.get('staff_responsible')
+        staff_responsible = request.user  # Set the "Staff Responsible" to the current user
+
+        # Check if the customer already exists based on contact number
+        contact_number = request.POST.get('contact_number')
+        customer = Customer.objects.filter(contact_number=contact_number).first()
+
+        if not customer:
+            # If customer doesn't exist, create a new one
+            customer_name = request.POST.get('customer_name')
+            address = request.POST.get('address')
+            customer = Customer.objects.create(name=customer_name, contact_number=contact_number, address=address)
 
         transaction = Transaction.objects.create(
             date=date,
-            customer_id=customer_id,
-            staff_responsible_id=staff_responsible_id
+            customer=customer,
+            staff_responsible=staff_responsible
         )
 
-        scrap_item_ids = request.POST.getlist('scrap_item')
-        quantities = request.POST.getlist('quantity')
-
-        for scrap_item_id, quantity in zip(scrap_item_ids, quantities):
-            if scrap_item_id and quantity:
-                scrap_item = ScrapItem.objects.get(id=scrap_item_id)
-                quantity = int(quantity)
-
-                TransactionDetail.objects.create(
-                    transaction=transaction,
-                    scrap_item=scrap_item,
-                    quantity=quantity
-                )
+        scrap_items = request.POST.getlist('scraps')
+        for scrap_item_id in scrap_items:
+            transaction_detail = TransactionDetail.objects.create(
+                transaction=transaction,
+                scrap_item_id=scrap_item_id,
+                quantity=1  # If you want to allow the user to specify the quantity, use request.POST.get('quantity') or similar.
+            )
 
         return redirect('transaction_list')
+    else:
+        staff = User.objects.filter(userprofile__user_type='staff')
+        scraps = ScrapItem.objects.all()
 
-    daily_scrap_entries = DailyScrapEntry.objects.all()
-    scrap_items = ScrapItem.objects.all()
-    customers = Customer.objects.all()
-    staff = User.objects.filter(userprofile__user_type='staff')
-    context = {
-        'daily_scrap_entries': daily_scrap_entries,
-        'scrap_items': scrap_items,
-        'customers': customers,
-        'staff': staff,
-    }
-    return render(request, 'add_transaction.html', context)
-
+        return render(request, 'create_transaction.html', {'staff': staff, 'scraps': scraps})
 
 def transaction_list(request):
     transactions = Transaction.objects.all()

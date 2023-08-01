@@ -25,7 +25,7 @@ SECRET_KEY = "django-insecure-l_#o4*cjrj1+3uyz2p0+ynozwj)p@_@)$)!@jq^#+xpmo7#^27
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['tpsim.pythonanywhere.com']
+ALLOWED_HOSTS = ['tpsim.pythonanywhere.com', '127.0.0.1']
 
 
 LOGIN_REDIRECT_URL = 'daily_scrap_table'
