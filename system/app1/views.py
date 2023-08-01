@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 
 from .models import *
+
 from django.http import HttpResponse
 from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
@@ -227,3 +228,49 @@ def signup(request):
 
     messages.get_messages(request).used = True
     return render(request, 'signup.html')
+
+
+def add_transaction(request):
+    if request.method == 'POST':
+        date = request.POST.get('date')
+        customer_id = request.POST.get('customer')
+        staff_responsible_id = request.POST.get('staff_responsible')
+
+        transaction = Transaction.objects.create(
+            date=date,
+            customer_id=customer_id,
+            staff_responsible_id=staff_responsible_id
+        )
+
+        scrap_item_ids = request.POST.getlist('scrap_item')
+        quantities = request.POST.getlist('quantity')
+
+        for scrap_item_id, quantity in zip(scrap_item_ids, quantities):
+            if scrap_item_id and quantity:
+                scrap_item = ScrapItem.objects.get(id=scrap_item_id)
+                quantity = int(quantity)
+
+                TransactionDetail.objects.create(
+                    transaction=transaction,
+                    scrap_item=scrap_item,
+                    quantity=quantity
+                )
+
+        return redirect('transaction_list')
+
+    daily_scrap_entries = DailyScrapEntry.objects.all()
+    scrap_items = ScrapItem.objects.all()
+    customers = Customer.objects.all()
+    staff = User.objects.filter(userprofile__user_type='staff')
+    context = {
+        'daily_scrap_entries': daily_scrap_entries,
+        'scrap_items': scrap_items,
+        'customers': customers,
+        'staff': staff,
+    }
+    return render(request, 'add_transaction.html', context)
+
+
+def transaction_list(request):
+    transactions = Transaction.objects.all()
+    return render(request, 'transaction_list.html', {'transactions': transactions})

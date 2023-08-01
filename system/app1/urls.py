@@ -10,7 +10,9 @@ urlpatterns = [
     path('generate-pdf-report/', views.generate_pdf_report, name='generate_pdf_report'),
 
 
-
+    path('add_transaction/', views.add_transaction, name='add_transaction'),
+    path('transaction_list/', views.transaction_list, name='transaction_list'),
+    
     path('login/', views.login, name='login'),
     path('logout/', views.user_logout, name='logout'),
     path('signup/', views.signup, name='signup'),
