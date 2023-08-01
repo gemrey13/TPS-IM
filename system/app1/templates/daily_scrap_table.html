@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+    <link rel="stylesheet" href="{% static "daily_scrap_table.css" %}">
+
+    <h1>Daily Scrap Entries</h1>
+    <a href="{% url 'add_daily_scrap_entry' %}">Add Entry</a>
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Scrap Item</th>
+          <th>Quantity</th>
+          <th>Actions</th>
+        </tr>
+      <thead>
+      <tbody>
+    {% for entry in daily_scrap_entries %}
+        <tr>
+          <td>{{ entry.date }}</td>
+          {% for scrap_entry_detail in entry.scrapentrydetail_set.all %}
+            <td>{{ scrap_entry_detail.scrap_item }}</td>
+            <td>({{ scrap_entry_detail.quantity }})</td>
+          {% endfor %}
+          <td>
+          {% for scrap_entry_detail in entry.scrapentrydetail_set.all %}
+            <form action="{% url 'remove_daily_scrap_entry' scrap_entry_detail.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit">Remove</button>
+            </form>
+          {% endfor %}
+          </td>
+        </tr>
+    {% endfor %}
+
+      </tbody>
+    <table/>
+      
+    <blockquote> Responsive Table </blockquote>
+{% endblock content %}

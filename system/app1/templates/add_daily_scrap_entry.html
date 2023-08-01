@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1>Add Daily Scrap Entry</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label for="id_date">Date:</label>
+        <input type="date" name="date" id="id_date" required>
+        <br><br>
+        <h3>Scrap Items:</h3>
+        <table>
+            <tr>
+                <th>Scrap Item</th>
+                <th>Quantity</th>
+            </tr>
+            {% for scrap_item in scrap_items %}
+            <tr>
+                <td>{{ scrap_item.RFID }} - {{ scrap_item.scrap_type.name }}</td>
+                <td>
+                    <input type="number" name="quantity_{{ scrap_item.id }}" min="1" value="1" required>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        <br>
+        <button type="submit">Save Entry</button>
+    </form>
+{% endblock content %}
