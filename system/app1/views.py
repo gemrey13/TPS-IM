@@ -72,6 +72,7 @@ def daily_scrap_table(request):
     return render(request, 'daily_scrap_table.html', {'daily_scrap_entries': daily_scrap_entries})
 
 
+@login_required(login_url='login')
 def add_daily_scrap_entry(request):
     if request.method == 'POST':
         date = request.POST.get('date')
@@ -119,7 +120,7 @@ def add_daily_scrap_entry(request):
     return render(request, 'add_daily_scrap_entry.html', {'scrap_types': scrap_types})
 
 
-
+@login_required(login_url='login')
 def remove_scrap_entry_detail(request, detail_id):
     scrap_entry_detail = get_object_or_404(ScrapEntryDetail, id=detail_id)
     daily_scrap_entry = scrap_entry_detail.daily_scrap_entry
@@ -127,7 +128,7 @@ def remove_scrap_entry_detail(request, detail_id):
     return redirect('daily_scrap_table')
 
 
-
+@login_required(login_url='login')
 def add_scrap_item_to_daily_scrap_entry(request, entry_id):
     daily_scrap_entry = get_object_or_404(DailyScrapEntry, id=entry_id)
 

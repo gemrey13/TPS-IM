@@ -7,6 +7,11 @@
 }
 body{
   font-family: montserrat;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  background: rgb(105,153,92);
+  background: linear-gradient(6deg, rgba(105,153,92,1) 0%, rgba(169,226,162,1) 100%);
 }
 nav{
   background: #0082e6;
