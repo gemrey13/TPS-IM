@@ -1,34 +1,55 @@
-<!-- add_daily_scrap_entry.html -->
-
 {% extends 'base.html' %}
 {% block content %}
-  <h1>Add Daily Scrap Entry</h1>
-  <form method="post">
-    {% csrf_token %}
-    <label for="date">Date:</label>
-    <input type="date" name="date" required>
-    <br>
-    <div>
-      <label for="scrap_item_rfid">Scrap Item RFID:</label>
-      <input type="text" name="scrap_item_rfid" required>
-
-      <label for="scrap_item_weight">Scrap Item Weight (kg):</label>
-      <input type="number" name="scrap_item_weight" step="0.01" required>
-
-      <label for="scrap_item_type">Scrap Item Type:</label>
-      <select name="scrap_item_type" required>
-        <option value="" disabled selected>Select Scrap Type</option>
-        {% for scrap_type in scrap_types %}
-          <option value="{{ scrap_type.name }}">{{ scrap_type.name }}</option>
-        {% endfor %}
-      </select>
-      
-      <label for="scrap_item_quantity">Quantity:</label>
-      <input type="number" name="scrap_item_quantity" required>
-    </div>
-    <!-- Add more scrap item fields as needed -->
-    <br>
-    <button type="submit">Add Daily Scrap Entry</button>
-  </form>
-  <a href="{% url 'daily_scrap_table' %}">Back to Daily Scrap Table</a>
+{% load static %}
+<link rel="stylesheet" href="{% static 'add_daily_scrap_entry.css' %}">
+<a href="{% url 'daily_scrap_table' %}">Back to Daily Scrap Table</a>
+<div class="main">
+<div class="container">
+    <div class="text">Add Daily Scrap Entry</div>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-row">
+            <label for="date">Date:</label>
+            <div class="input-data">
+                <input type="date" name="date" required>
+                <div class="underline"></div>
+            </div>
+            <div class="input-data">
+                <input type="text" name="scrap_item_rfid" required>
+                <div class="underline"></div>
+                <label for="scrap_item_rfid">Scrap Item RFID:</label>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="input-data">
+                <input type="number" name="scrap_item_weight" step="0.01" required>
+                <div class="underline"></div>
+                <label for="scrap_item_weight">Scrap Item Weight (kg):</label>
+            </div>
+            <div class="input-data">
+                <input type="number" name="scrap_item_quantity" required>
+                <div class="underline"></div>
+                <label for="scrap_item_quantity">Quantity:</label>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="input-data textarea">
+                <select name="scrap_item_type" required>
+                    <option value="" disabled selected>Select Scrap Type</option>
+                    {% for scrap_type in scrap_types %}
+                    <option value="{{ scrap_type.name }}">{{ scrap_type.name }}</option>
+                    {% endfor %}
+                </select>
+                <br />
+                <div class="underline"></div>
+                <br />
+                <div class="form-row submit-btn">
+                    <div class="input-data">
+                        <div class="inner"></div>
+                        <input type="submit" value="Add">
+                    </div>
+                </div>
+    </form>
+</div>
+</div>
 {% endblock content %}
