@@ -18,13 +18,20 @@
     {% for entry in daily_scrap_entries %}
         <tr>
           <td>{{ entry.date }}</td>
-          {% for scrap_entry_detail in entry.scrapentrydetail_set.all %}
-            <td>{{ scrap_entry_detail.scrap_item }}</td>
-            <td>({{ scrap_entry_detail.quantity }})</td>
-          {% endfor %}
           <td>
           {% for scrap_entry_detail in entry.scrapentrydetail_set.all %}
-            <form action="{% url 'remove_daily_scrap_entry' scrap_entry_detail.id %}" method="post">
+            {{ scrap_entry_detail.scrap_item }}<br />
+          {% endfor %}
+          </td>
+          <td>
+          {% for scrap_entry_detail in entry.scrapentrydetail_set.all %}
+            ({{ scrap_entry_detail.quantity }}) <br />
+          {% endfor %}
+          </td>
+
+          <td>
+          {% for scrap_entry_detail in entry.scrapentrydetail_set.all %}
+            <form action="{% url 'remove_scrap_entry_detail' scrap_entry_detail.id %}" method="post">
                 {% csrf_token %}
                 <button type="submit">Remove</button>
             </form>

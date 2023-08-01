@@ -1,5 +1,7 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import DailyScrapEntry, ScrapItem, ScrapEntryDetail
+
+
 
 def daily_scrap_table(request):
     daily_scrap_entries = DailyScrapEntry.objects.all()
@@ -24,4 +26,13 @@ def add_daily_scrap_entry(request):
 def remove_daily_scrap_entry(request, entry_id):
     entry = DailyScrapEntry.objects.get(pk=entry_id)
     entry.delete()
+    return redirect('daily_scrap_table')
+
+def remove_scrap_entry_detail(request, detail_id):
+    scrap_entry_detail = get_object_or_404(ScrapEntryDetail, id=detail_id)
+
+    daily_scrap_entry = scrap_entry_detail.daily_scrap_entry
+
+    scrap_entry_detail.delete()
+
     return redirect('daily_scrap_table')
