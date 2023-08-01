@@ -1,0 +1,20 @@
+<!-- add_scrap_item.html -->
+{% extends 'base.html' %}
+{% block content %}
+<h1>Add Scrap Item to Daily Scrap Entry (Date: {{ daily_scrap_entry.date }})</h1>
+<form method="post">
+  {% csrf_token %}
+  <label for="scrap_item">Select Scrap Item:</label>
+  <select name="scrap_item" id="scrap_item">
+    {% for scrap_item in associated_scrap_items %}
+      <option value="{{ scrap_item.id }}">{{ scrap_item.RFID }} - {{ scrap_item.scrap_type.name }} ({{ scrap_item.weight }} kg)</option>
+    {% endfor %}
+  </select>
+  <br>
+  <label for="quantity">Quantity:</label>
+  <input type="number" name="quantity" id="quantity" min="1" required>
+  <br>
+  <button type="submit">Add Scrap Item</button>
+</form>
+<a href="{% url 'daily_scrap_table' %}">Back to Daily Scrap Table</a>
+{% endblock content %}

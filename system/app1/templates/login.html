@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="{% static "login.css" %}">
+  <div class="container">
+    <input type="checkbox" id="check">
+    <div class="login form">
+      <header>Login</header>
+      <form method='post'>
+        {% csrf_token %}
+        <input type="text" placeholder="Enter your username" name="username">
+        <input type="password" placeholder="Enter your password" name="pass">
+        <a href="#">Forgot password?</a>
+        <input type="submit" class="button" value="Login">
+      </form>
+      {% if error %}
+          <p>{{ error }}</p>
+      {% endif %}
+      <div class="signup">
+        <span class="signup">Don't have an account?
+         <a href="{% url 'signup' %}">Signup</label>
+        </span>
+      </div>
+    </div>
+    </div>
+  </div>{% endblock content %}

@@ -28,6 +28,8 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
+LOGIN_REDIRECT_URL = 'daily_scrap_table'
+
 # Application definition
 
 INSTALLED_APPS = [

@@ -1,47 +1,49 @@
 {% extends 'base.html' %}
 {% block content %}
 {% load static %}
-    <link rel="stylesheet" href="{% static "daily_scrap_table.css" %}">
-
+<link rel="stylesheet" href="{% static "daily_scrap_table.css" %}">
+<div class="header">
     <h1>Daily Scrap Entries</h1>
-    <a href="{% url 'add_daily_scrap_entry' %}">Add Entry</a>
-    <table>
-      <thead>
+    <a href="{% url 'add_daily_scrap_entry' %}" class="add_entry">Add Entry</a>
+</div>
+<table>
+    <thead>
         <tr>
-          <th>Date</th>
-          <th>Scrap Item</th>
-          <th>Quantity</th>
-          <th>Actions</th>
+            <th>Date</th>
+            <th>Scrap Item</th>
+            <th>Quantity</th>
+            <th colspan="2">Actions</th>
         </tr>
-      <thead>
-      <tbody>
-    {% for entry in daily_scrap_entries %}
+    <thead>
+    <tbody>
+        {% for entry in daily_scrap_entries %}
         <tr>
-          <td>{{ entry.date }}</td>
-          <td>
-          {% for scrap_entry_detail in entry.scrapentrydetail_set.all %}
-            {{ scrap_entry_detail.scrap_item }}<br />
-          {% endfor %}
-          </td>
-          <td>
-          {% for scrap_entry_detail in entry.scrapentrydetail_set.all %}
-            ({{ scrap_entry_detail.quantity }}) <br />
-          {% endfor %}
-          </td>
-
-          <td>
-          {% for scrap_entry_detail in entry.scrapentrydetail_set.all %}
-            <form action="{% url 'remove_scrap_entry_detail' scrap_entry_detail.id %}" method="post">
-                {% csrf_token %}
-                <button type="submit">Remove</button>
-            </form>
-          {% endfor %}
-          </td>
+            <td>{{ entry.date }}</td>
+            <td>
+                {% for scrap_entry_detail in entry.scrapentrydetail_set.all %}
+                {{ scrap_entry_detail.scrap_item }}<br />
+                {% endfor %}
+            </td>
+            <td>
+                {% for scrap_entry_detail in entry.scrapentrydetail_set.all %}
+                ({{ scrap_entry_detail.quantity }}) <br />
+                {% endfor %}
+            </td>
+            <td>
+                {% for scrap_entry_detail in entry.scrapentrydetail_set.all %}
+                <form action="{% url 'remove_scrap_entry_detail' scrap_entry_detail.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="remove">Remove</button>
+                </form>
+                {% endfor %}
+            </td>
+            <td>
+                <a href="{% url 'add_scrap_item_to_daily_scrap_entry' entry.id %}">Add Scrap Item</a>
+            </td>
         </tr>
-    {% endfor %}
+        {% endfor %}
+    </tbody>
+<table />
 
-      </tbody>
-    <table/>
-      
-    <blockquote> Responsive Table </blockquote>
+<a href="{% url 'generate_pdf_report' %}" class="btn btn-primary">Generate PDF Report</a>
 {% endblock content %}

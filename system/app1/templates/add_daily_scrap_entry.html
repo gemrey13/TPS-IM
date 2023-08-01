@@ -1,27 +1,34 @@
+<!-- add_daily_scrap_entry.html -->
+
 {% extends 'base.html' %}
 {% block content %}
-    <h1>Add Daily Scrap Entry</h1>
-    <form method="post">
-        {% csrf_token %}
-        <label for="id_date">Date:</label>
-        <input type="date" name="date" id="id_date" required>
-        <br><br>
-        <h3>Scrap Items:</h3>
-        <table>
-            <tr>
-                <th>Scrap Item</th>
-                <th>Quantity</th>
-            </tr>
-            {% for scrap_item in scrap_items %}
-            <tr>
-                <td>{{ scrap_item.RFID }} - {{ scrap_item.scrap_type.name }}</td>
-                <td>
-                    <input type="number" name="quantity_{{ scrap_item.id }}" min="1" value="1" required>
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
-        <br>
-        <button type="submit">Save Entry</button>
-    </form>
+  <h1>Add Daily Scrap Entry</h1>
+  <form method="post">
+    {% csrf_token %}
+    <label for="date">Date:</label>
+    <input type="date" name="date" required>
+    <br>
+    <div>
+      <label for="scrap_item_rfid">Scrap Item RFID:</label>
+      <input type="text" name="scrap_item_rfid" required>
+
+      <label for="scrap_item_weight">Scrap Item Weight (kg):</label>
+      <input type="number" name="scrap_item_weight" step="0.01" required>
+
+      <label for="scrap_item_type">Scrap Item Type:</label>
+      <select name="scrap_item_type" required>
+        <option value="" disabled selected>Select Scrap Type</option>
+        {% for scrap_type in scrap_types %}
+          <option value="{{ scrap_type.name }}">{{ scrap_type.name }}</option>
+        {% endfor %}
+      </select>
+      
+      <label for="scrap_item_quantity">Quantity:</label>
+      <input type="number" name="scrap_item_quantity" required>
+    </div>
+    <!-- Add more scrap item fields as needed -->
+    <br>
+    <button type="submit">Add Daily Scrap Entry</button>
+  </form>
+  <a href="{% url 'daily_scrap_table' %}">Back to Daily Scrap Table</a>
 {% endblock content %}

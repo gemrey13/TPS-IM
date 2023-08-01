@@ -6,10 +6,14 @@
       </label>
       <label class="logo">TPS-IM</label>
       <ul>
-        <li><a class="active" href="#">Home</a></li>
-        <li><a href="#">Daily Scraps Entry</a></li>
+        <li><a href="#">Home</a></li>
+        <li><a class="active" href="{% url 'daily_scrap_table' %}">Daily Scraps Entry</a></li>
         <li><a href="#">Transaction</a></li>
         <li><a href="#">About</a></li>
-        <li><a href="#">Log Out</a></li>
+        {% if user.is_authenticated %}
+          <li><a href="{% url 'logout' %}">Logout</a></li>
+        {% else %}
+          <li><a href="{% url 'login' %}">Login</a></li>
+        {% endif %}
       </ul>
     </nav>
