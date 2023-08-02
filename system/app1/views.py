@@ -21,32 +21,25 @@ def generate_pdf_report(request):
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="scrap_report.pdf"'
 
-    # Create a SimpleDocTemplate for the PDF
     pdf = SimpleDocTemplate(response, pagesize=letter)
 
-    # Retrieve data for daily dates and associated scrap items
     daily_scrap_entries = DailyScrapEntry.objects.all()
 
-    # Create a list to store table data
     table_data = [
-        ['Date', 'RFID', 'Type', 'Weight (kg)', 'Quantity'],  # Header row
+        ['Date', 'price', 'Type', 'Weight (kg)', 'Quantity'],  # Header row
     ]
 
-    # Add the data to the table
     for entry in daily_scrap_entries:
-        # Add the date to the table without background color
         table_data.append([str(entry.date), '', '', '', ''])
 
-        # Fetch associated scrap items for the current daily entry
         scrap_entries = ScrapEntryDetail.objects.filter(daily_scrap_entry=entry)
         for scrap_entry in scrap_entries:
             # Add scrap item data to the table
-            table_data.append(['', str(scrap_entry.scrap_item.RFID),
+            table_data.append(['', str(scrap_entry.scrap_item.price),
                                str(scrap_entry.scrap_item.scrap_type),
                                str(scrap_entry.scrap_item.weight),
                                str(scrap_entry.quantity)])
 
-    # Define the style for the table
     table_style = TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), 'gray'),  # Header row background color
         ('TEXTCOLOR', (0, 0), (-1, 0), 'white'),  # Header row text color
@@ -87,16 +80,16 @@ def add_daily_scrap_entry(request):
         except DailyScrapEntry.DoesNotExist:
             daily_scrap_entry = DailyScrapEntry.objects.create(date=date)
 
-        rfid_list = request.POST.getlist('scrap_item_rfid')
+        price_list = request.POST.getlist('price')
         weight_list = request.POST.getlist('scrap_item_weight')
         scrap_type_list = request.POST.getlist('scrap_item_type')
         quantity_list = request.POST.getlist('scrap_item_quantity')
 
-        for rfid, weight, scrap_type_name, quantity in zip(rfid_list, weight_list, scrap_type_list, quantity_list):
-            if rfid and weight and scrap_type_name and quantity:
+        for price, weight, scrap_type_name, quantity in zip(price_list, weight_list, scrap_type_list, quantity_list):
+            if price and weight and scrap_type_name and quantity:
                 scrap_type, _ = ScrapType.objects.get_or_create(name=scrap_type_name)
                 scrap_item, _ = ScrapItem.objects.get_or_create(
-                    RFID=rfid,
+                    price=price,
                     defaults={
                         'weight': weight,
                         'scrap_type': scrap_type,

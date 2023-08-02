@@ -6,16 +6,17 @@ from django.dispatch import receiver
 class ScrapType(models.Model):
     name = models.CharField(max_length=50, unique=True)
 
-    def __str__(self):
+    def __str__(self):  
         return self.name
 
 class ScrapItem(models.Model):
-    RFID = models.CharField(max_length=100, unique=True)
+    RFID = models.CharField(max_length=100, blank=True, default='sample')
     weight = models.DecimalField(max_digits=10, decimal_places=2)
     scrap_type = models.ForeignKey(ScrapType, on_delete=models.CASCADE)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
-        return f"RFID: {self.RFID}, Type: {self.scrap_type}, Weight: {self.weight} kg"
+        return f"RFID: {self.RFID}, Type: {self.scrap_type}, Weight: {self.weight} kg, Price: {self.price}"
 
 class Customer(models.Model):
     name = models.CharField(max_length=100)
