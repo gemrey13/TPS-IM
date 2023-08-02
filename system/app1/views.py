@@ -50,53 +50,6 @@ def transaction_report(request, transaction_id):
     return response
 
 
-def generate_pdf_report(request):
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="scrap_report.pdf"'
-
-    pdf = SimpleDocTemplate(response, pagesize=letter)
-
-    daily_scrap_entries = DailyScrapEntry.objects.all()
-
-    table_data = [
-        ['Date', 'price', 'Type', 'Weight (kg)', 'Quantity'],  # Header row
-    ]
-
-    for entry in daily_scrap_entries:
-        table_data.append([str(entry.date), '', '', '', ''])
-
-        scrap_entries = ScrapEntryDetail.objects.filter(daily_scrap_entry=entry)
-        for scrap_entry in scrap_entries:
-            # Add scrap item data to the table
-            table_data.append(['', str(scrap_entry.scrap_item.price),
-                               str(scrap_entry.scrap_item.scrap_type),
-                               str(scrap_entry.scrap_item.weight),
-                               str(scrap_entry.quantity)])
-
-    table_style = TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), 'gray'),  # Header row background color
-        ('TEXTCOLOR', (0, 0), (-1, 0), 'white'),  # Header row text color
-        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),  # Center-align all cells
-        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),  # Header font
-        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),  # Add padding to the header row
-        ('BOX', (0, 0), (-1, -1), 1, 'black'),  # Add borders to all cells
-        ('INNERGRID', (0, 0), (-1, -1), 0.25, 'black'),  # Add inner grid lines
-    ])
-
-    # Create the table with specified column widths
-    col_widths = [80, 120, 120, 80, 80]  # Adjust the width of each column here
-    table = Table(table_data, colWidths=col_widths)
-
-    # Apply the table style
-    table.setStyle(table_style)
-
-    # Add the table to the PDF document
-    elements = [table]
-    pdf.build(elements)
-
-    return response
-
-
 @login_required(login_url='login')
 def daily_scrap_table(request):
     daily_scrap_entries = DailyScrapEntry.objects.all()
