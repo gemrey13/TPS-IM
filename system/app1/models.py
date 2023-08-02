@@ -65,26 +65,9 @@ class Transaction(models.Model):
     date = models.DateField()
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True)
     staff_responsible = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
-    scraps = models.ManyToManyField(ScrapItem, through='TransactionDetail')
+    scraps = models.ManyToManyField(ScrapItem)
 
     def __str__(self):
-        return f"Transaction Date: {self.date}"
+        return f"Transaction Date: {self.date} | Customer: {self.customer} | Staff Responsible: {self.staff_responsible} | Scraps: {self.scraps}"
 
-class TransactionDetail(models.Model):
-    transaction = models.ForeignKey(Transaction, on_delete=models.CASCADE)
-    scrap_item = models.ForeignKey(ScrapItem, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField(default=1)
 
-    def __str__(self):
-        return f"Transaction: {self.transaction}, Scrap Item: {self.scrap_item}, Quantity: {self.quantity}"
-
-class UserProfile(models.Model):
-    USER_TYPES = (
-        ('owner', 'Owner'),
-        ('staff', 'Staff'),
-    )
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    user_type = models.CharField(max_length=10, choices=USER_TYPES)
-
-    def __str__(self):
-        return f"{self.user.username} - {self.user_type}"

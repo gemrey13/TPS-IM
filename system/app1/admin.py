@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import ScrapType, ScrapItem, Customer, DailyScrapEntry, ScrapEntryDetail, Transaction, TransactionDetail, UserProfile
+from .models import ScrapType, ScrapItem, Customer, DailyScrapEntry, ScrapEntryDetail, Transaction
 
 # Register your models here
 admin.site.register(ScrapType)
@@ -23,12 +23,3 @@ class ScrapEntryDetailAdmin(admin.ModelAdmin):
 @admin.register(Transaction)
 class TransactionAdmin(admin.ModelAdmin):
     list_display = ['date', 'customer', 'staff_responsible']
-
-@admin.register(TransactionDetail)
-class TransactionDetailAdmin(admin.ModelAdmin):
-    list_display = ['transaction', 'scrap_item', 'quantity']
-
-@admin.register(UserProfile)
-class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ['user', 'user_type']
-

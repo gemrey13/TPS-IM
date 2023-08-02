@@ -234,56 +234,96 @@ def signup(request):
     messages.get_messages(request).used = True
     return render(request, 'signup.html')
 
-
-
+# views.py
 @login_required(login_url='login')
 def create_transaction(request):
     if request.method == 'POST':
         date = request.POST.get('date')
-        staff_responsible = request.user  # Set the "Staff Responsible" to the current user
+        customer_id = request.POST.get('customer')
+        staff_responsible = request.user
 
-        # Check if the customer already exists based on contact number
-        contact_number = request.POST.get('contact_number')
-        customer = Customer.objects.filter(contact_number=contact_number).first()
+        # Create the Transaction
+        transaction = Transaction.objects.create(date=date, customer_id=customer_id, staff_responsible=staff_responsible)
 
-        if not customer:
-            # If customer doesn't exist, create a new one
-            customer_name = request.POST.get('customer_name')
-            address = request.POST.get('address')
-            customer = Customer.objects.create(name=customer_name, contact_number=contact_number, address=address)
+        # Process the scraps and create TransactionDetails
+        scraps = request.POST.getlist('scraps')
+        quantities = request.POST.getlist('quantities')
 
-        # Create a DailyScrapEntry for the transaction
-        daily_scrap_entry = DailyScrapEntry.objects.create(date=date, customer=customer, staff_responsible=staff_responsible)
+        for i, scrap_id in enumerate(scraps):
+            scrap_item = ScrapItem.objects.get(pk=scrap_id)
+            quantity = quantities[i]
+            TransactionDetail.objects.create(transaction=transaction, scrap_item=scrap_item, quantity=quantity)
 
-        transaction = Transaction.objects.create(
-            date=date,
-            customer=customer,
-            staff_responsible=staff_responsible
-        )
+        # Create a new ScrapItem
+        new_rfid = request.POST.get('new_rfid')
+        new_weight = request.POST.get('new_weight')
+        new_scrap_type = request.POST.get('new_scrap_type')
+        new_scrap_item = ScrapItem.objects.create(RFID=new_rfid, weight=new_weight, scrap_type__name=new_scrap_type)
 
-        scrap_items = request.POST.getlist('scraps')
-        for scrap_item_id in scrap_items:
-            scrap_item = ScrapItem.objects.get(id=scrap_item_id)
-            quantity = int(request.POST.get(f'quantity_{scrap_item_id}', 1))
-            transaction_detail = TransactionDetail.objects.create(
-                transaction=transaction,
-                scrap_item=scrap_item,
-                quantity=quantity
-            )
+        # Create a new DailyScrapEntry
+        new_daily_scrap_entry_date = request.POST.get('new_daily_scrap_entry_date')
+        new_daily_scrap_entry = DailyScrapEntry.objects.create(date=new_daily_scrap_entry_date, customer_id=customer_id, staff_responsible=staff_responsible)
 
-            # Create a ScrapEntryDetail for the DailyScrapEntry
-            ScrapEntryDetail.objects.create(
-                daily_scrap_entry=daily_scrap_entry,
-                scrap_item=scrap_item,
-                quantity=quantity
-            )
+        # Create a new ScrapEntryDetail
+        new_scrap_entry_detail_quantity = request.POST.get('new_scrap_entry_detail_quantity')
+        ScrapEntryDetail.objects.create(daily_scrap_entry=new_daily_scrap_entry, scrap_item=new_scrap_item, quantity=new_scrap_entry_detail_quantity)
 
-        return redirect('transaction_list')
+        return redirect('transaction_list')  # Redirect to transaction list view after successful creation
     else:
-        staff = User.objects.filter(userprofile__user_type='staff')
+        # Fetch the necessary data for the form
+        customers = Customer.objects.all()
         scraps = ScrapItem.objects.all()
+        return render(request, 'create_transaction.html', {'customers': customers, 'scraps': scraps})
 
-        return render(request, 'create_transaction.html', {'staff': staff, 'scraps': scraps})
+
+# @login_required(login_url='login')
+# def create_transaction(request):
+#     if request.method == 'POST':
+#         date = request.POST.get('date')
+#         staff_responsible = request.user  # Set the "Staff Responsible" to the current user
+
+#         # Check if the customer already exists based on contact number
+#         contact_number = request.POST.get('contact_number')
+#         customer = Customer.objects.filter(contact_number=contact_number).first()
+
+#         if not customer:
+#             # If customer doesn't exist, create a new one
+#             customer_name = request.POST.get('customer_name')
+#             address = request.POST.get('address')
+#             customer = Customer.objects.create(name=customer_name, contact_number=contact_number, address=address)
+
+#         # Create a DailyScrapEntry for the transaction
+#         daily_scrap_entry = DailyScrapEntry.objects.create(date=date, customer=customer, staff_responsible=staff_responsible)
+
+#         transaction = Transaction.objects.create(
+#             date=date,
+#             customer=customer,
+#             staff_responsible=staff_responsible
+#         )
+
+#         scrap_items = request.POST.getlist('scraps')
+#         for scrap_item_id in scrap_items:
+#             scrap_item = ScrapItem.objects.get(id=scrap_item_id)
+#             quantity = int(request.POST.get(f'quantity_{scrap_item_id}', 1))
+#             transaction_detail = TransactionDetail.objects.create(
+#                 transaction=transaction,
+#                 scrap_item=scrap_item,
+#                 quantity=quantity
+#             )
+
+#             # Create a ScrapEntryDetail for the DailyScrapEntry
+#             ScrapEntryDetail.objects.create(
+#                 daily_scrap_entry=daily_scrap_entry,
+#                 scrap_item=scrap_item,
+#                 quantity=quantity
+#             )
+
+#         return redirect('transaction_list')
+#     else:
+#         staff = User.objects.filter(userprofile__user_type='staff')
+#         scraps = ScrapItem.objects.all()
+
+#         return render(request, 'create_transaction.html', {'staff': staff, 'scraps': scraps})
 
 @login_required(login_url='login')
 def transaction_list(request):
