@@ -6,7 +6,9 @@ from django.contrib.auth.models import User
 from django.db.models import F
 from django.contrib import messages
 from django.utils.timezone import localtime
+from django.utils import timezone
 from .models import *
+
 
 from django.http import HttpResponse
 from reportlab.lib.pagesizes import letter
