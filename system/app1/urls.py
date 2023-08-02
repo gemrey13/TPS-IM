@@ -14,6 +14,7 @@ urlpatterns = [
     path('transaction_list/', views.transaction_list, name='transaction_list'),
 
 
+    path('', views.landing, name='landing'),
     
     path('login/', views.login, name='login'),
     path('logout/', views.user_logout, name='logout'),

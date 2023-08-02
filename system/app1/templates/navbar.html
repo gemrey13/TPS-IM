@@ -5,11 +5,11 @@
         <i class="fas fa-bars"></i>
       </label>
           <span class="logo">
-            <img src="{% static 'img/logotps.png' %}" width="50" class="logo-img">
+            <img src="{% static 'img/logotps.png' %}" width="50" {% if request.resolver_match.url_name == 'landing' %}class=""{% else %}class="logo-img"{% endif %}>
           <span>Daquila Junkshop</span>
         </span>
       <ul>
-        <li><a href="#">Home</a></li>
+        <li><a {% if request.resolver_match.url_name == 'landing' %}class="active"{% endif %} href="{% url 'landing' %}">Home</a></li>
         <li><a {% if request.resolver_match.url_name == 'daily_scrap_table' %}class="active"{% endif %} href="{% url 'daily_scrap_table' %}">Daily Scraps Entry</a></li>
         <li><a {% if request.resolver_match.url_name == 'transaction_list' %}class="active"{% endif %} href="{% url 'transaction_list' %}">Transaction</a></li>
         <li><a href="#">About</a></li>

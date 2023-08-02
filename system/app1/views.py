@@ -242,3 +242,7 @@ def create_transaction(request):
 def transaction_list(request):
     transactions = Transaction.objects.all().order_by('-date')
     return render(request, 'transaction_list.html', {'transactions': transactions})
+
+
+def landing(request):
+    return render(request, 'landing_page.html')
