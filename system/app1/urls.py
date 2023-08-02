@@ -7,7 +7,7 @@ urlpatterns = [
     path('remove_scrap_entry_detail/<int:detail_id>/', views.remove_scrap_entry_detail, name='remove_scrap_entry_detail'),
     path('add_scrap_item_to_daily_scrap_entry/<int:entry_id>/', views.add_scrap_item_to_daily_scrap_entry, name='add_scrap_item_to_daily_scrap_entry'),
 
-    path('generate-pdf-report/', views.generate_pdf_report, name='generate_pdf_report'),
+    path('transaction-report/<int:transaction_id>/', views.transaction_report, name='transaction_report'),
 
 
     path('create_transaction/', views.create_transaction, name='create_transaction'),

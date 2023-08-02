@@ -5,8 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db.models import F
 from django.contrib import messages
-from django.utils import timezone
-
+from django.utils.timezone import localtime
 from .models import *
 
 from django.http import HttpResponse
@@ -15,6 +14,40 @@ from reportlab.lib import colors
 from reportlab.pdfgen import canvas
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from reportlab.pdfgen import canvas
+
+
+
+def transaction_report(request, transaction_id):
+    transaction = Transaction.objects.get(id=transaction_id)
+    transaction_date = localtime(transaction.date)
+    formatted_date = transaction_date.strftime('%B %d, %Y - %I:%M %p')
+
+    pdf_content = render_to_string('pdf-report/transaction-pdf.html', {'transaction': transaction})
+
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="transaction_report_{transaction_id}.pdf"'
+
+    p = canvas.Canvas(response)
+    p.drawString(100, 790, "Transaction Report")
+    p.drawString(100, 750, f"Date: {formatted_date}")
+    p.drawString(100, 730, f"Customer Name: {transaction.customer}")
+    p.drawString(100, 710, f"Contact Number: {transaction.customer.contact_number}")
+    p.drawString(100, 690, f"Customer Address: {transaction.customer.address}")
+    p.drawString(100, 670, f"Staff: {transaction.staff_responsible}")
+    p.drawString(100, 650, "Scraps:")
+    
+    y = 630
+    for scrap_item in transaction.scraps.all():
+        p.drawString(120, y, f"{scrap_item.RFID} - {scrap_item.scrap_type.name} ({scrap_item.weight} kg)")
+        y -= 20
+
+    p.showPage()
+    p.save()
+
+    return response
 
 
 def generate_pdf_report(request):
@@ -254,5 +287,5 @@ def create_transaction(request):
 
 @login_required(login_url='login')
 def transaction_list(request):
-    transactions = Transaction.objects.all()
+    transactions = Transaction.objects.all().order_by('-date')
     return render(request, 'transaction_list.html', {'transactions': transactions})

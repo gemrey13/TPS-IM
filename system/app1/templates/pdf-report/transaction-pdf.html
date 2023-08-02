@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Transaction Report</title>
+</head>
+<body>
+    <h1>Transaction Report</h1>
+    <p>Date: {{ transaction.date|date:"F d, Y - h:i A" }}</p>
+    <p>Customer Name: {{ transaction.customer }}</p>
+    <p>Contact Number: {{ transaction.customer.contact_number }}</p>
+    <p>Customer Address: {{ transaction.customer.address }}</p>
+    <p>Staff: {{ transaction.staff_responsible }}</p>
+    <h2>Scraps:</h2>
+    <ul>
+        {% for scrap_item in transaction.scraps.all %}
+        <li>{{ scrap_item.RFID }} - {{ scrap_item.scrap_type.name }} ({{ scrap_item.weight }} kg)</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

@@ -1,11 +1,36 @@
 {% extends "base.html" %}
 {% block content %}
 {% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'transaction_list.css' %}">
+<div class="header">
     <h1>Transaction List</h1>
     <a href="{% url 'create_transaction' %}">Add transaction</a>
-    <ul>
-        {% for transaction in transactions %}
-            <li>{{ transaction }}</li>
-        {% endfor %}
-    </ul>
+</div>
+<div class="container">
+  <ul class="responsive-table">
+    <li class="table-header">
+      <div class="col col-1">Date</div>
+      <div class="col col-2">Customer Name</div>
+      <div class="col col-3">Staff</div>
+      <div class="col col-4">Scraps</div>
+      <div class="col col-5">Report</div>
+    </li>
+    {% for transaction in transactions %}
+    <li class="table-row">
+      <div class="col col-1" data-label="Job Id">{{ transaction.date }}</div>
+      <div class="col col-2" data-label="Customer Name">{{ transaction.customer }}</div>
+      <div class="col col-3" data-label="Staff">{{ transaction.staff_responsible }}</div>
+      <div class="col col-4" data-label="Scraps">
+        {% for scrap_item in transaction.scraps.all %}
+                {{ scrap_item.RFID }} - {{ scrap_item.scrap_type.name }} ({{ scrap_item.weight }} kg)
+                {% if not forloop.last %}, {% endif %}
+            {% endfor %}
+      </div>
+      <div class="col col-5" data-label="report">
+          <a href="{% url 'transaction_report' transaction.id %}" target="_blank">PDF Report</a>
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
 {% endblock content %}
