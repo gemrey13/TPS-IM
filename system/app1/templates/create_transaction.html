@@ -17,10 +17,6 @@
             <form method="post">
                 {% csrf_token %}
                 <div class="nice-form-group">
-                    <label>Date</label>
-                    <input type="date" name='date' placeholder="Enter date" class="icon-left" required />
-                </div>
-                <div class="nice-form-group">
                     <label>Customer</label>
                     <input type="text" name="customer" placeholder="Enter Customer" class="icon-left" required/>
                 </div>
@@ -38,11 +34,12 @@
                         {% for scrap in scraps %}
                         <option value="{{ scrap.id }}">{{ scrap.RFID }} - {{ scrap.scrap_type.name }}</option>
                         {% endfor %}
-                    </select>
+                    </select><br/>
                 </div>
+                    <a href="{% url 'add_daily_scrap_entry' %}" class="add_entry">Add Scrap</a>
+
                 <div class="nice-form-group">
                     <input type="submit">
-
                 </div>
             </form>
         </section>

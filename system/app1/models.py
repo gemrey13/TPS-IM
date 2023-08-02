@@ -62,12 +62,13 @@ def delete_empty_scrap_item(sender, instance, **kwargs):
 
 
 class Transaction(models.Model):
-    date = models.DateField()
+    date = models.DateTimeField(blank=True, null=True)
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True)
     staff_responsible = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     scraps = models.ManyToManyField(ScrapItem)
 
     def __str__(self):
-        return f"Transaction Date: {self.date} | Customer: {self.customer} | Staff Responsible: {self.staff_responsible} | Scraps: {self.scraps}"
+        scraps_list = ", ".join([str(scrap) for scrap in self.scraps.all()])
+        return f"Transaction Date: {self.date} | Customer: {self.customer} | Staff Responsible: {self.staff_responsible} | Scraps: {scraps_list}"
 
 
