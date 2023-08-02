@@ -252,6 +252,9 @@ def create_transaction(request):
             address = request.POST.get('address')
             customer = Customer.objects.create(name=customer_name, contact_number=contact_number, address=address)
 
+        # Create a DailyScrapEntry for the transaction
+        daily_scrap_entry = DailyScrapEntry.objects.create(date=date, customer=customer, staff_responsible=staff_responsible)
+
         transaction = Transaction.objects.create(
             date=date,
             customer=customer,
@@ -260,10 +263,19 @@ def create_transaction(request):
 
         scrap_items = request.POST.getlist('scraps')
         for scrap_item_id in scrap_items:
+            scrap_item = ScrapItem.objects.get(id=scrap_item_id)
+            quantity = int(request.POST.get(f'quantity_{scrap_item_id}', 1))
             transaction_detail = TransactionDetail.objects.create(
                 transaction=transaction,
-                scrap_item_id=scrap_item_id,
-                quantity=1  # If you want to allow the user to specify the quantity, use request.POST.get('quantity') or similar.
+                scrap_item=scrap_item,
+                quantity=quantity
+            )
+
+            # Create a ScrapEntryDetail for the DailyScrapEntry
+            ScrapEntryDetail.objects.create(
+                daily_scrap_entry=daily_scrap_entry,
+                scrap_item=scrap_item,
+                quantity=quantity
             )
 
         return redirect('transaction_list')
