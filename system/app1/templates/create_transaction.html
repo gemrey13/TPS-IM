@@ -18,15 +18,15 @@
                 {% csrf_token %}
                 <div class="nice-form-group">
                     <label>Date</label>
-                    <input type="date" name='date' placeholder="Enter date" class="icon-left" />
+                    <input type="date" name='date' placeholder="Enter date" class="icon-left" required />
                 </div>
                 <div class="nice-form-group">
                     <label>Customer</label>
-                    <input type="text" name="customer" placeholder="Enter Customer" class="icon-left" />
+                    <input type="text" name="customer" placeholder="Enter Customer" class="icon-left" required/>
                 </div>
                 <div class="nice-form-group">
                     <label>Contact Number</label>
-                    <input type="tel" name="contact_number" placeholder="Your Contact Number" value="" class="icon-left" />
+                    <input type="tel" name="contact_number" placeholder="Your Contact Number" value="" class="icon-left" required/>
                 </div>
                 <div class="nice-form-group">
                     <label>Address</label>
@@ -34,13 +34,16 @@
                 </div>
                 <div class="nice-form-group">
                     <label>Scraps:</label>
-                    <select id="scraps" name="scraps" multiple>
+                    <select id="scraps" name="scraps" multiple required>
                         {% for scrap in scraps %}
                         <option value="{{ scrap.id }}">{{ scrap.RFID }} - {{ scrap.scrap_type.name }}</option>
                         {% endfor %}
                     </select>
                 </div>
-                <input type="submit">
+                <div class="nice-form-group">
+                    <input type="submit">
+
+                </div>
             </form>
         </section>
     </main>
