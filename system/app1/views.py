@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
 from django.contrib.auth import authenticate, login as auth_login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -75,7 +76,6 @@ def daily_scrap_table(request):
     daily_scrap_entries = DailyScrapEntry.objects.all()
     return render(request, 'daily_scrap_table.html', {'daily_scrap_entries': daily_scrap_entries})
 
-
 @login_required(login_url='login')
 def add_daily_scrap_entry(request):
     if request.method == 'POST':
@@ -123,8 +123,12 @@ def add_daily_scrap_entry(request):
                 scraps_added.append(scrap_item)
 
         daily_scrap_entry.scraps.add(*scraps_added)
-        return redirect('daily_scrap_table')
 
+        previous_url = request.session.get('previous_url', reverse('daily_scrap_table'))
+        print(previous_url)
+        return redirect(previous_url)
+
+    request.session['previous_url'] = request.META.get('HTTP_REFERER', reverse('daily_scrap_table'))
     scrap_types = ScrapType.objects.all()
     return render(request, 'add_daily_scrap_entry.html', {'scrap_types': scrap_types})
 
@@ -269,6 +273,7 @@ def create_transaction(request):
 
         return render(request, 'create_transaction.html', {'staff': staff, 'scraps': scraps})
 
+@login_required(login_url='login')
 def transaction_list(request):
     transactions = Transaction.objects.all()
     return render(request, 'transaction_list.html', {'transactions': transactions})

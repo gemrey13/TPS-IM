@@ -18,6 +18,7 @@
         <textarea name="address" required></textarea>
         <br>
         <p>Scraps:</p>
+        {% if scraps %}
         {% for scrap_item in scraps %}
             <label>
                 <input type="checkbox" name="scraps" value="{{ scrap_item.id }}">
@@ -25,6 +26,11 @@
             </label>
             <br>
         {% endfor %}
+        {% else %}
+            <h4>No Scraps items.</h4>
+        {% endif %}
+            <a href="{% url 'add_daily_scrap_entry' %}" class="add_entry">Add Entry</a>
+
         <br>
         <button type="submit">Save</button>
     </form>

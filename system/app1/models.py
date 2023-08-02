@@ -51,6 +51,16 @@ def delete_empty_daily_scrap_entry(sender, instance, **kwargs):
     if not has_other_scrap_entries:
         instance.daily_scrap_entry.delete()
 
+@receiver(post_delete, sender=ScrapEntryDetail)
+def delete_empty_scrap_item(sender, instance, **kwargs):
+    # Check if the related ScrapItem has any other ScrapEntryDetail objects
+    has_other_scrap_entries = ScrapEntryDetail.objects.filter(scrap_item=instance.scrap_item).exists()
+
+    # If there are no other ScrapEntryDetail objects, delete the ScrapItem
+    if not has_other_scrap_entries:
+        instance.scrap_item.delete()
+
+
 class Transaction(models.Model):
     date = models.DateField()
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True)
